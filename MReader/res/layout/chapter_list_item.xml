@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="wrap_content"
+    glview:textColor="@color/black"
+    glview:textSize="18sp"
+    glview:padding="8dp" >
+</TextView>

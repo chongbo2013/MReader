@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:glview="http://schemas.android.com/apk/res-auto">
+    <item glview:state_pressed="true" glview:drawable="@drawable/font_size_reduce_press" />
+    <item glview:drawable="@drawable/font_size_reduce_normal" />
+</selector>

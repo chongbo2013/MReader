@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+	glview:id="@+id/pagestyle_item"
+	style="@style/PageStyleItem"
+	glview:layout_width="wrap_content"
+	glview:layout_height="wrap_content"
+	glview:background="@drawable/btn_pagestyle_bg_selector"
+	glview:padding="10dp"
+	glview:layout_marginStart="5dp"
+	glview:layout_marginEnd="5dp" />

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.midcore.reader.view.PageStyleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:id="@+id/bottom_menu_pagestyle"
+    glview:layout_width="match_parent"
+    glview:layout_height="90dp"
+    glview:layout_gravity="bottom"
+    glview:background="@drawable/pop_bottom_bg"
+    glview:visibility="gone" >
+
+    <com.midcore.reader.view.ReaderHorizontalScrollView 
+        glview:id="@+id/pagestyle_scroll"
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:paddingStart="20dp"
+        glview:paddingEnd="20dp"
+        glview:clipChildren="true"
+        glview:scrollbars="none" >
+        <LinearLayout 
+            glview:id="@+id/pagestyle"
+            glview:layout_width="wrap_content"
+            glview:layout_height="match_parent"
+            glview:orientation="horizontal"
+            glview:gravity="center_vertical" >
+        </LinearLayout>
+    </com.midcore.reader.view.ReaderHorizontalScrollView>
+
+</com.midcore.reader.view.PageStyleLayout>

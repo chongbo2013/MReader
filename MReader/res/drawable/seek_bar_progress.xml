@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clip xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:gravity="left" 
+    glview:drawable="@drawable/seek_bar_progress_src" 
+    glview:clipOrientation="horizontal" />

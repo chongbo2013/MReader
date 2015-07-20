@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="wrap_content"
+    glview:orientation="vertical"
+    glview:gravity="left|center" >
+
+    <LinearLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="60dp"
+        glview:padding="10dp"
+        glview:orientation="horizontal"
+        glview:gravity="center_vertical"
+        >
+
+        <ImageView
+            glview:id="@+id/item_icon"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:src="@drawable/file_type_chm" />
+        <!-- 用于显示文件名的文本框 -->
+
+        <TextView
+            glview:id="@+id/item_name"
+            glview:layout_width="match_parent"
+            glview:layout_height="wrap_content"
+            glview:paddingLeft="10dp"
+            glview:ellipsize="end"
+            glview:singleLine="true"
+            glview:textColor="@color/black"
+            glview:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

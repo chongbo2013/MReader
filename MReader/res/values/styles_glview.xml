@@ -1,0 +1,27 @@
+<resources>
+
+    <style name="ChapterJumpText">
+        <item name="textSize">@dimen/font_size_large</item>
+        <item name="textColor">@color/text_color_1</item>
+    </style>
+    <style name="BottomMenuText">
+        <item name="textSize">@dimen/font_size_medium__</item>
+        <item name="textColor">@color/text_color_1</item>
+    </style>
+    <style name="MenuFontSizeText">
+        <item name="textSize">@dimen/font_size_large</item>
+        <item name="textColor">@color/text_color_1</item>
+    </style>
+    <style name="MenuFontSizeValue">
+        <item name="textSize">@dimen/font_size_large</item>
+        <item name="textColor">@color/text_color_2</item>
+    </style>
+    <style name="BrightMenuItem">
+        <item name="textSize">@dimen/font_size_large__</item>
+        <item name="textColor">@color/bright_off_color</item>
+    </style>
+    <style name="PageStyleItem">
+        <item name="textSize">@dimen/font_size_large</item>
+        <item name="textColor">@color/text_color_1</item>
+    </style>
+</resources>

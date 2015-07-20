@@ -1,0 +1,30 @@
+<resources>
+
+    <style name="AppBaseTheme" parent="@android:style/Theme">
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+    </style>
+    
+    <style name="DialogBaseTheme" parent="@android:style/Theme.Dialog">
+    </style>
+    <style name="GridItemMenuTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+		<item name="android:windowIsFloating">false</item>
+		<item name="android:backgroundDimEnabled">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+    </style>
+    
+    <style name="BookDeleteConformDialogTheme" parent="DialogBaseTheme"></style>
+    
+    <style name="ReaderTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    </style>
+    
+    <style name="ChapterDialog" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen"></style>
+
+    <style name="GridMenuItem">
+        <item name="android:textSize">@dimen/font_size_large</item>
+        <item name="android:textColor">@color/text_color_1</item>
+    </style>
+</resources>

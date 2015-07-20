@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.midcore.reader.view.BrightMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:id="@+id/bottom_menu_bright"
+    glview:layout_width="match_parent"
+    glview:layout_height="160dp"
+    glview:layout_gravity="bottom"
+    glview:background="@drawable/pop_bottom_bg"
+    glview:orientation="vertical"
+    glview:visibility="gone" >
+
+    <LinearLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="70dp"
+        glview:gravity="center"
+        glview:orientation="horizontal" >
+		<LinearLayout 
+		    glview:id="@+id/eye_protection"
+		    glview:layout_width="0dp"
+		    glview:layout_height="match_parent"
+		    glview:layout_weight="1"
+		    glview:gravity="center"
+		    glview:background="@drawable/menu_selector"
+		    glview:clickable="true" >
+		    <ImageView
+		        glview:id="@+id/eye_protection_icon"
+		        glview:layout_width="wrap_content"
+		        glview:layout_height="wrap_content"
+		        glview:src="@drawable/menu_eyes_icon1" />
+		    <TextView
+		        glview:id="@+id/eye_protection_text"
+		        glview:layout_width="wrap_content"
+		        glview:layout_height="wrap_content"
+		        style="@style/BrightMenuItem"
+		        glview:paddingLeft="5dp"
+		        glview:text="@string/eye_protection" />
+		</LinearLayout>
+		<ImageView 
+		    glview:layout_width="wrap_content"
+		    glview:layout_height="match_parent"
+		    glview:scaleType="fitXY"
+		    glview:alpha="0.3"
+		    glview:src="@drawable/line_v" />
+		<LinearLayout 
+		    glview:id="@+id/bright_system"
+		    glview:layout_width="0dp"
+		    glview:layout_height="match_parent"
+		    glview:layout_weight="1"
+		    glview:gravity="center"
+		    glview:background="@drawable/menu_selector"
+		    glview:clickable="true" >
+		    <ImageView
+		        glview:id="@+id/bright_system_icon"
+		        glview:layout_width="wrap_content"
+		        glview:layout_height="wrap_content"
+		        glview:src="@drawable/menu_light_icon1" />
+		    <TextView
+		        glview:id="@+id/bright_system_text"
+		        glview:layout_width="wrap_content"
+		        glview:layout_height="wrap_content"
+		        style="@style/BrightMenuItem"
+		        glview:paddingLeft="5dp"
+		        glview:text="@string/bright_system" />
+		</LinearLayout>
+    </LinearLayout>
+    
+    <ImageView
+        glview:layout_width="match_parent"
+        glview:layout_height="wrap_content"
+        glview:scaleType="fitXY"
+        glview:src="@drawable/line_h" />
+    
+    <LinearLayout 
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:gravity="center"
+        glview:paddingStart="10dp"
+        glview:paddingEnd="10dp" >
+        <ImageView
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:src="@drawable/icon_adjust_bright_small" />
+        <SeekBar
+            glview:id="@+id/bright_seek"
+            glview:layout_width="0dp"
+            glview:layout_height="wrap_content"
+            glview:layout_weight="1"
+            glview:background="@null"
+            glview:indeterminateDrawable="@null"
+            glview:max="255"
+            glview:progressDrawable="@drawable/seek_bar"
+            glview:thumb="@drawable/seek_bar_thumb"
+            glview:thumbOffset="0dp" />
+        <ImageView
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:src="@drawable/icon_adjust_bright_large" />
+    </LinearLayout>
+
+</com.midcore.reader.view.BrightMenuLayout>

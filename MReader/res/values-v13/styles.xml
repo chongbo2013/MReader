@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="AppBaseTheme" parent="@android:style/Theme.Holo.NoActionBar">
+    </style>
+    <style name="DialogBaseTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
+    </style>
+    
+    <style name="ReaderTheme" parent="@android:style/Theme.Holo.NoActionBar.Fullscreen">
+    </style>
+
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:glview="http://schemas.android.com/apk/res-auto">
+    <item glview:state_selected="true" glview:drawable="@drawable/theme_select_border" />
+    <item glview:drawable="@drawable/transparent" />
+</selector>

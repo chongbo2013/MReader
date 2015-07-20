@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.midcore.reader.view.BottomMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:id="@+id/bottom_menu"
+    glview:layout_width="match_parent"
+    glview:layout_height="160dp"
+    glview:layout_gravity="bottom"
+    glview:background="@drawable/pop_bottom_bg"
+    glview:orientation="vertical"
+    glview:visibility="gone" >
+
+    <LinearLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="70dp"
+        glview:gravity="center"
+        glview:orientation="horizontal" >
+
+        <TextView
+            glview:id="@+id/chapter_previous"
+            style="@style/ChapterJumpText"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:background="@drawable/btn_pre_bg_selector"
+            glview:clickable="true"
+            glview:padding="15dp"
+            glview:text="@string/previous_chapter" />
+
+        <SeekBar
+            glview:id="@+id/chapter_seek"
+            glview:layout_width="0dp"
+            glview:layout_height="wrap_content"
+            glview:layout_weight="1"
+            glview:background="@null"
+            glview:indeterminateDrawable="@null"
+            glview:max="10000"
+            glview:progressDrawable="@drawable/seek_bar"
+            glview:thumb="@drawable/seek_bar_thumb"
+            glview:thumbOffset="0dp" />
+
+        <TextView
+            glview:id="@+id/chapter_next"
+            style="@style/ChapterJumpText"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:background="@drawable/btn_next_bg_selector"
+            glview:clickable="true"
+            glview:padding="15dp"
+            glview:text="@string/next_chapter" />
+    </LinearLayout>
+
+    <ImageView
+        glview:layout_width="match_parent"
+        glview:layout_height="wrap_content"
+        glview:scaleType="fitXY"
+        glview:src="@drawable/line_h" />
+
+    <LinearLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:gravity="center"
+        glview:orientation="horizontal" >
+
+        <LinearLayout
+            glview:id="@+id/menu_chapter"
+            glview:layout_width="wrap_content"
+            glview:layout_height="match_parent"
+            glview:layout_weight="1"
+            glview:background="@drawable/menu_selector"
+            glview:clickable="true"
+            glview:gravity="center"
+            glview:orientation="vertical" >
+            <ImageView
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:src="@drawable/icon_item_directory" />
+            <TextView
+                style="@style/BottomMenuText"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:text="@string/menu_chapter" />
+        </LinearLayout>
+        
+        <LinearLayout
+            glview:id="@+id/menu_bright"
+            glview:layout_width="wrap_content"
+            glview:layout_height="match_parent"
+            glview:layout_weight="1"
+            glview:background="@drawable/menu_selector"
+            glview:clickable="true"
+            glview:gravity="center"
+            glview:orientation="vertical" >
+            <ImageView
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:src="@drawable/icon_item_bright" />
+            <TextView
+                style="@style/BottomMenuText"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:text="@string/menu_bright" />
+        </LinearLayout>
+        
+        <LinearLayout
+            glview:id="@+id/menu_pagestyle"
+            glview:layout_width="wrap_content"
+            glview:layout_height="match_parent"
+            glview:layout_weight="1"
+            glview:background="@drawable/menu_selector"
+            glview:clickable="true"
+            glview:gravity="center"
+            glview:orientation="vertical" >
+            <ImageView
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:src="@drawable/icon_item_pagestyle" />
+            <TextView
+                style="@style/BottomMenuText"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:text="@string/menu_pagestyle" />
+        </LinearLayout>
+        
+        <LinearLayout
+            glview:id="@+id/menu_font"
+            glview:layout_width="wrap_content"
+            glview:layout_height="match_parent"
+            glview:layout_weight="1"
+            glview:background="@drawable/menu_selector"
+            glview:clickable="true"
+            glview:gravity="center"
+            glview:orientation="vertical" >
+            <ImageView
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:src="@drawable/icon_item_font" />
+            <TextView
+                style="@style/BottomMenuText"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:text="@string/menu_font" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.midcore.reader.view.BottomMenuLayout>

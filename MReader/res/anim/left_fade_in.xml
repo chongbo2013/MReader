@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translate xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:fromXDelta="-100%p"
+    glview:toXDelta="0"
+    glview:duration="200">
+</translate>

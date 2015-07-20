@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="wrap_content"
+    glview:layout_height="wrap_content"
+    glview:layout_marginStart="10dp"
+    glview:layout_marginEnd="10dp"
+    glview:padding="5dp"
+    glview:clickable="true"
+    glview:background="@drawable/theme_item_selector" >
+
+    <TextView
+        glview:id="@+id/content"
+        glview:layout_width="50dp"
+        glview:layout_height="50dp"
+        glview:textSize="@dimen/font_size_medium__"
+        glview:gravity="center" />
+</FrameLayout>

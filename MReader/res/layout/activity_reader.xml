@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.midcore.reader.view.ReaderLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="match_parent"
+    glview:focusable="true" >
+
+    <com.midcore.reader.view.BookReadView
+        glview:id="@+id/book_read_view"
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:background="@android:color/white" />
+
+    <include layout="@layout/layout_reader_top_menu" />
+    
+    <include layout="@layout/layout_reader_bottom_menu" />
+    
+    <include layout="@layout/layout_reader_bottom_menu_bright" />
+    
+    <include layout="@layout/layout_reader_bottom_menu_pagestyle" />
+    
+    <include layout="@layout/layout_reader_bottom_menu_font" />
+    
+    <View
+        glview:id="@+id/eye_protection_view"
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:visibility="gone"
+        glview:background="@color/eye_protection" />
+</com.midcore.reader.view.ReaderLayout>

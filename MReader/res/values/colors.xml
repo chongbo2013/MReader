@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#ff030303</color>
+    <color name="red">#ffff0000</color>
+    
+    <color name="text_color_1">#ff999999</color>
+    <color name="text_color_2">#ffffffff</color>
+    
+    <color name="divider_1">#33313131</color>
+    <color name="divider_2">#33ffffff</color>
+    
+    <color name="eye_protection">#22441100</color>
+    
+    <color name="bright_off_color">#ff959595</color>
+    <color name="bright_on_color">#ffe8554d</color>
+    <color name="eye_protection_off_color">#ff959595</color>
+    <color name="eye_protection_on_color">#ff85a84d</color>
+    
+</resources>

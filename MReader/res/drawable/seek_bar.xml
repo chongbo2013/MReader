@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:glview="http://schemas.android.com/apk/res-auto">
+    <item glview:id="@android:id/background" glview:drawable="@drawable/seek_bar_background" />
+    <item glview:id="@android:id/progress" glview:drawable="@drawable/seek_bar_progress" />
+</layer-list>

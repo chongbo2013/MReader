@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.midcore.reader.view.TopMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:id="@+id/top_menu"
+    glview:layout_width="match_parent"
+    glview:layout_height="60dp"
+    glview:background="@drawable/pop_head_bg"
+    glview:layout_gravity="top"
+    glview:visibility="gone" >
+    <ImageView 
+        glview:id="@+id/back"
+        glview:layout_width="wrap_content"
+        glview:layout_height="wrap_content"
+        glview:layout_gravity="center_vertical"
+        glview:clickable="true"
+        glview:src="@drawable/icon_return" />
+</com.midcore.reader.view.TopMenuLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="160dp"
+    >
+    <FrameLayout 
+        glview:id="@+id/item_back"
+        glview:layout_width="80dip"
+        glview:layout_height="110dip"
+        glview:layout_marginTop="40dp" 
+        glview:layout_gravity="top|center_horizontal">
+        <TextView
+	        glview:id="@+id/item_text"
+	        glview:layout_width="wrap_content"
+	        glview:layout_height="wrap_content"
+	        glview:textColor="@color/black"
+	        glview:textSize="16sp"
+	        glview:layout_gravity="center" />
+    </FrameLayout>
+
+</FrameLayout>

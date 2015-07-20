@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="match_parent"
+    glview:orientation="vertical"
+    glview:background="@drawable/bg_default_white" >
+
+    <include layout="@layout/head" />
+
+    <RelativeLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent" >
+
+        <RelativeLayout
+            glview:id="@+id/top"
+            glview:layout_width="match_parent"
+            glview:layout_height="wrap_content" >
+
+            <TextView
+                glview:id="@+id/top_path"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:padding="15dp"
+                glview:singleLine="true"
+                glview:textColor="@color/black"
+                glview:textSize="18sp"
+                glview:ellipsize="start"
+                glview:maxWidth="200dp" >
+            </TextView>
+
+            <RelativeLayout
+                glview:id="@+id/path_back"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                 >
+
+                <LinearLayout
+                    glview:layout_width="wrap_content"
+               		glview:layout_height="wrap_content"
+               		glview:orientation="horizontal"	
+                    glview:layout_centerVertical="true"
+                    glview:layout_marginRight="10dp"
+                    glview:layout_toLeftOf="@+id/path_back_icon" >
+
+                    <View
+                        glview:layout_width="0.3dp"
+                        glview:layout_height="25dp"
+                        glview:background="@color/divider_1" />
+
+                    <View
+                        glview:layout_width="0.3dp"
+                        glview:layout_height="20dp"
+                        glview:background="@color/divider_2" />
+                </LinearLayout>
+
+                <TextView
+                    glview:id="@+id/path_back_text"
+                    glview:layout_width="wrap_content"
+                	glview:layout_height="wrap_content"
+	                glview:onClick="onClick"
+                    glview:layout_alignParentRight="true"
+                    glview:padding="15dp"
+                    glview:singleLine="true"
+                    glview:text="@string/path_back"
+                    glview:textColor="@color/black"
+                    glview:textSize="15sp" />
+
+                <ImageView
+                    glview:id="@+id/path_back_icon"
+                    glview:layout_width="wrap_content"
+                	glview:layout_height="wrap_content"
+	                glview:onClick="onClick"
+                    glview:layout_toLeftOf="@+id/path_back_text"
+                    glview:paddingTop="10dp"
+                    glview:src="@drawable/local_up" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <FrameLayout
+            glview:layout_width="match_parent"
+            glview:layout_height="match_parent"
+            glview:layout_below="@id/top" >
+            
+            <ImageView 
+                glview:id="@+id/book_file_empty"
+                glview:visibility="gone"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:layout_gravity="center"
+                glview:src="@drawable/file_empty"
+                />
+
+            <ListView
+                glview:id="@+id/book_file_list"
+                glview:layout_width="match_parent"
+                glview:layout_height="match_parent"
+                glview:clipChildren="true"
+                glview:divider="@drawable/line_h"
+                glview:listSelector="@drawable/list_selector" >
+            </ListView>
+        </FrameLayout>
+    </RelativeLayout>
+
+</LinearLayout>

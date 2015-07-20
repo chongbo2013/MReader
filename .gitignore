@@ -1,0 +1,11 @@
+*.class
+*.dex
+*.apk
+*.ap_
+bin/
+gen/
+.project
+.settings
+.classpath
+project.properties
+.externalToollBuilders

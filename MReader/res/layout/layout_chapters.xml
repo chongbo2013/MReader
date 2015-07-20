@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="match_parent" >
+    <LinearLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:orientation="vertical" >
+        <LinearLayout
+            glview:id="@+id/head_view"
+            glview:layout_width="match_parent"
+            glview:layout_height="wrap_content"
+            glview:gravity="center_vertical"
+            glview:orientation="horizontal" >
+            <ImageView
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:src="@drawable/chapter_return" />
+            <TextView
+                glview:id="@+id/title_view"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:textSize="20sp" />
+        </LinearLayout>
+        <ImageView
+            glview:layout_width="match_parent"
+            glview:layout_height="wrap_content"
+            glview:scaleType="fitXY"
+            glview:src="@drawable/line_h" />
+        <ListView
+            glview:id="@+id/chapter_list"
+            glview:layout_width="match_parent"
+            glview:layout_height="match_parent"
+            glview:clipChildren="true"
+            glview:divider="@drawable/line_h"
+            glview:listSelector="@drawable/list_selector" />
+    </LinearLayout>
+    <View
+        glview:id="@+id/eye_protection_view"
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:visibility="gone"
+        glview:background="@color/eye_protection" />
+</FrameLayout>

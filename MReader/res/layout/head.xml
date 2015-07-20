@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:layout_width="match_parent"
+    glview:layout_height="match_parent" >
+
+    <RelativeLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="wrap_content"
+        glview:background="@drawable/bookshelf_header_bg" >
+
+        <ImageView
+            glview:id="@+id/head_left"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:onClick="onClick"
+            glview:layout_alignParentLeft="true"
+            glview:paddingTop="12dp" />
+
+        <ImageView
+            glview:id="@+id/head_right"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:focusable="true"
+            glview:focusableInTouchMode="true"
+            glview:onClick="onClick"
+            glview:layout_alignParentRight="true"
+            glview:paddingRight="5dp"
+            glview:paddingTop="12dp" />
+
+        <LinearLayout
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:layout_centerVertical="true"
+            glview:layout_marginRight="5dp"
+            glview:layout_toRightOf="@+id/head_left"
+            glview:orientation="horizontal" >
+
+            <View
+                glview:layout_width="0.3dp"
+                glview:layout_height="25dp"
+                glview:background="@color/divider_1" />
+
+            <View
+                glview:layout_width="0.3dp"
+                glview:layout_height="25dp"
+                glview:background="@color/divider_2" />
+        </LinearLayout>
+
+        <LinearLayout
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:layout_centerVertical="true"
+            glview:layout_marginRight="5dp"
+            glview:layout_toLeftOf="@+id/head_right"
+            glview:orientation="horizontal" >
+
+            <View
+                glview:layout_width="0.3dp"
+                glview:layout_height="25dp"
+                glview:background="@color/divider_1" />
+
+            <View
+                glview:layout_width="0.3dp"
+                glview:layout_height="25dp"
+                glview:background="@color/divider_2" />
+        </LinearLayout>
+
+        <LinearLayout
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:layout_centerHorizontal="true"
+            glview:layout_centerVertical="true"
+            glview:orientation="horizontal" >
+
+            <TextView
+                glview:id="@+id/head_title"
+                glview:layout_width="wrap_content"
+                glview:layout_height="wrap_content"
+                glview:layout_marginRight="15dp"
+                glview:gravity="center"
+                glview:textColor="#ff6B2F0D"
+                glview:textSize="22sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</merge>

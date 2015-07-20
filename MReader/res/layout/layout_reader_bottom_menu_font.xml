@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.midcore.reader.view.FontMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glview="http://schemas.android.com/apk/res-auto"
+    glview:id="@+id/bottom_menu_font"
+    glview:layout_width="match_parent"
+    glview:layout_height="160dp"
+    glview:layout_gravity="bottom"
+    glview:background="@drawable/pop_bottom_bg"
+    glview:orientation="vertical"
+    glview:visibility="gone" >
+
+    <LinearLayout
+        glview:layout_width="match_parent"
+        glview:layout_height="70dp"
+        glview:gravity="center"
+        glview:orientation="horizontal" >
+
+        <Button
+            glview:id="@+id/font_size_minus"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:padding="10dp"
+            glview:background="@drawable/font_size_reduce_selector"
+            glview:gravity="center" />
+        
+        <TextView
+            glview:id="@+id/font_size_setting"
+            style="@style/MenuFontSizeText"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:layout_marginLeft="20dp"
+            glview:text="@string/font_size" />
+        <TextView
+            glview:id="@+id/font_size_value"
+            style="@style/MenuFontSizeValue"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:layout_marginLeft="10dp"
+            glview:layout_marginRight="20dp" />
+
+        <Button
+            glview:id="@+id/font_size_plus"
+            glview:layout_width="wrap_content"
+            glview:layout_height="wrap_content"
+            glview:padding="10dp"
+            glview:background="@drawable/font_size_add_selector"
+            glview:gravity="center" />
+    </LinearLayout>
+    
+    <ImageView
+        glview:layout_width="match_parent"
+        glview:layout_height="wrap_content"
+        glview:scaleType="fitXY"
+        glview:src="@drawable/line_h" />
+    
+    <com.midcore.reader.view.ReaderHorizontalScrollView 
+        glview:id="@+id/theme_scroll"
+        glview:layout_width="match_parent"
+        glview:layout_height="match_parent"
+        glview:paddingStart="20dp"
+        glview:paddingEnd="20dp"
+        glview:clipChildren="true"
+        glview:scrollbars="none" >
+        <LinearLayout 
+            glview:id="@+id/theme"
+            glview:layout_width="wrap_content"
+            glview:layout_height="match_parent"
+            glview:orientation="horizontal"
+            glview:gravity="center_vertical" >
+        </LinearLayout>
+    </com.midcore.reader.view.ReaderHorizontalScrollView>
+
+</com.midcore.reader.view.FontMenuLayout>
