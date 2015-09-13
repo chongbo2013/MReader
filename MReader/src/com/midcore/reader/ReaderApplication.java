@@ -3,11 +3,15 @@ package com.midcore.reader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
+import com.baidu.android.pushservice.BasicPushNotificationBuilder;
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
 import com.glview.app.GLApplication;
 import com.midcore.reader.db.BookDBHelper;
 import com.midcore.reader.model.Book;
@@ -22,7 +26,19 @@ public class ReaderApplication extends GLApplication {
 	public void onCreate() {
 		super.onCreate();
 		
+		initBaiduPush();
+		
 		checkPresetBooks();
+	}
+	
+	private void initBaiduPush() {
+		BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder();
+		builder.setNotificationFlags(Notification.FLAG_AUTO_CANCEL);
+		builder.setNotificationDefaults(Notification.DEFAULT_VIBRATE);
+		builder.setStatusbarIcon(this.getApplicationInfo().icon);
+		PushManager.setDefaultNotificationBuilder(getApplicationContext(), builder);
+		
+		PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, Constant.BAIDU_PUSH_APP_KEY);
 	}
 	
 	private void checkPresetBooks() {
