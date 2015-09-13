@@ -9,3 +9,4 @@ gen/
 .classpath
 project.properties
 .externalToollBuilders
+proguard/
