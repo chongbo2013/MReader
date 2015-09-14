@@ -37,8 +37,8 @@ public class TxtReader extends Reader {
 	private final static int BUFFER_SIZE_WITH_NO_CHAPTER = 32 * 1024;
 	private final static int FLOATING_BUFFER_SIZE = 64 * 1024;
 	
-	// "(\第)(.*)([章节回])(\\s)(.*)"
-	final Pattern mChapterPattern = Pattern.compile("(\u7b2c)(.{1,10})([\u7ae0\u8282\u56de])(\\s)(.{1,30})(\\n|\\r\\n|\\r|\u2029)");
+	// "(\第)(.*)([章节回集])(.*)"
+	final Pattern mChapterPattern = Pattern.compile("(\u7b2c)(.{1,10})([\u7ae0\u8282\u56de\u96c6])(.{0,30})(\\n|\\r\\n|\\r|\u2029)");
 	
 	final Pattern mLineBreakerPattern = Pattern.compile("(\r|\r\n|\n|\u2029)");
 	byte[] mLineBreaker;
