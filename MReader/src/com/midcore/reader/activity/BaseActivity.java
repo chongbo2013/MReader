@@ -23,7 +23,7 @@ public class BaseActivity extends GLActivity {
 	}
 	
 	private void initBaiduPush() {
-		if (!PushManager.isPushEnabled(getApplicationContext())) {
+		if (!PushManager.isPushEnabled(this)) {
 			PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY, Constant.BAIDU_PUSH_APP_KEY);
 		}
 	}

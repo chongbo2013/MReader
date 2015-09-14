@@ -12,6 +12,7 @@ import android.util.Log;
 import com.baidu.android.pushservice.BasicPushNotificationBuilder;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.baidu.android.pushservice.PushSettings;
 import com.glview.app.GLApplication;
 import com.midcore.reader.db.BookDBHelper;
 import com.midcore.reader.model.Book;
@@ -37,6 +38,7 @@ public class ReaderApplication extends GLApplication {
 		builder.setNotificationDefaults(Notification.DEFAULT_VIBRATE);
 		builder.setStatusbarIcon(this.getApplicationInfo().icon);
 		PushManager.setDefaultNotificationBuilder(getApplicationContext(), builder);
+//		PushSettings.enableDebugMode(getApplicationContext(), true);
 		
 		PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, Constant.BAIDU_PUSH_APP_KEY);
 	}
