@@ -12,7 +12,6 @@ import android.util.Log;
 import com.baidu.android.pushservice.BasicPushNotificationBuilder;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
-import com.baidu.android.pushservice.PushSettings;
 import com.glview.app.GLApplication;
 import com.midcore.reader.db.BookDBHelper;
 import com.midcore.reader.model.Book;
