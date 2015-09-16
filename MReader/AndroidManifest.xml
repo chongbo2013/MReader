@@ -42,7 +42,7 @@
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
             android:label="@string/app_name"
-            android:exported="true" >
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -52,7 +52,8 @@
         <activity
             android:name=".activity.FileActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
-            android:label="@string/title_activity_file" >
+            android:label="@string/title_activity_file"
+            android:launchMode="singleTask" >
         </activity>
         <activity
             android:name=".activity.ReaderActivity"

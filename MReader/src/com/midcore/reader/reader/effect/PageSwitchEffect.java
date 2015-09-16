@@ -136,7 +136,11 @@ public abstract class PageSwitchEffect implements OnGestureListener {
 			mCurrentDistance = mDampedSpringScroller.getCurrX();
 		}
 		onSwitching();
-		innerDraw(canvas, page1, page2, forward);
+		if (page1 == null || page2 == null) {
+			more = false;
+		} else {
+			innerDraw(canvas, page1, page2, forward);
+		}
 		if (!more && !mIsTouching) {
 			stopSwitching();
 		}
