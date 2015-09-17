@@ -17,6 +17,7 @@ import com.midcore.reader.db.BookDBHelper;
 import com.midcore.reader.model.Book;
 import com.midcore.reader.utils.FileUtils;
 import com.midcore.reader.utils.IOUtils;
+import com.testin.agent.TestinAgent;
 
 public class ReaderApplication extends GLApplication {
 
@@ -27,6 +28,7 @@ public class ReaderApplication extends GLApplication {
 		super.onCreate();
 		
 		initBaiduPush();
+		initTestinAgent();
 		
 		checkPresetBooks();
 	}
@@ -40,6 +42,10 @@ public class ReaderApplication extends GLApplication {
 //		PushSettings.enableDebugMode(getApplicationContext(), true);
 		
 		PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, Constant.BAIDU_PUSH_APP_KEY);
+	}
+	
+	private void initTestinAgent() {
+		TestinAgent.init(getApplicationContext(), Constant.TESTIN_AGENT_APP_KEY, "360/baidu");
 	}
 	
 	private void checkPresetBooks() {
