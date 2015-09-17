@@ -35,7 +35,7 @@ public class TxtReader extends Reader {
 	
 	private final static int BUFFER_SIZE = 512 * 1024;
 	private final static int BUFFER_SIZE_WITH_NO_CHAPTER = 32 * 1024;
-	private final static int FLOATING_BUFFER_SIZE = 64 * 1024;
+	private final static int FLOATING_BUFFER_SIZE = 128 * 1024;
 	
 	// "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集])(.*)"
 	private final static String LINE_BREAKER = "\r|\r\n|\n|\u2029";
