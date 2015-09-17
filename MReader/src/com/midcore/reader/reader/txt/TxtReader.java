@@ -37,10 +37,10 @@ public class TxtReader extends Reader {
 	private final static int BUFFER_SIZE_WITH_NO_CHAPTER = 32 * 1024;
 	private final static int FLOATING_BUFFER_SIZE = 64 * 1024;
 	
-	// "(第)([1-9一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集])(.*)"
+	// "(第)([1-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集])(.*)"
 	private final static String LINE_BREAKER = "\r|\r\n|\n|\u2029";
 	private final static int TITILE_GROUP_INDEX = 4;
-	final Pattern mChapterPattern = Pattern.compile("(\u7b2c)([1-9\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6])((" + LINE_BREAKER + ")|((\\s)(.{0,30})(" + LINE_BREAKER + ")))");
+	final Pattern mChapterPattern = Pattern.compile("(\u7b2c)([1-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6])((" + LINE_BREAKER + ")|((\\s)(.{0,30})(" + LINE_BREAKER + ")))");
 	final Pattern mLineBreakerPattern = Pattern.compile("(" + LINE_BREAKER + ")");
 	byte[] mLineBreaker;
 
