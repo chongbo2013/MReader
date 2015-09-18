@@ -24,6 +24,7 @@ import com.tencent.android.tpush.XGNotifaction;
 import com.tencent.android.tpush.XGPushConfig;
 import com.tencent.android.tpush.XGPushManager;
 import com.tencent.android.tpush.XGPushNotifactionCallback;
+import com.tencent.bugly.crashreport.CrashReport;
 
 public class ReaderApplication extends GLApplication {
 
@@ -33,9 +34,17 @@ public class ReaderApplication extends GLApplication {
 	public void onCreate() {
 		super.onCreate();
 		
+		initBugly();
 		initPush();
 		
 		checkPresetBooks();
+	}
+	
+	/**
+	 * 异常收集
+	 */
+	private void initBugly() {
+		CrashReport.initCrashReport(getApplicationContext(), "900008821", false);
 	}
 	
 	private void initPush() {
@@ -76,6 +85,7 @@ public class ReaderApplication extends GLApplication {
 			});
 			XGBasicPushNotificationBuilder builder = new XGBasicPushNotificationBuilder();
 			builder.setIcon(R.drawable.icon);
+			builder.setSmallIcon(R.drawable.icon_small);
 			builder.setFlags(Notification.FLAG_AUTO_CANCEL);
 			builder.setDefaults(Notification.DEFAULT_VIBRATE);
 			XGPushManager.setDefaultNotificationBuilder(getApplicationContext(), builder);
