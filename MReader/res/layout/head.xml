@@ -21,8 +21,6 @@
             glview:id="@+id/head_right"
             glview:layout_width="wrap_content"
             glview:layout_height="wrap_content"
-            glview:focusable="true"
-            glview:focusableInTouchMode="true"
             glview:onClick="onClick"
             glview:layout_alignParentRight="true"
             glview:paddingRight="5dp"

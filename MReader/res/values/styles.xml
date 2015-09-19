@@ -7,7 +7,18 @@
     
     <style name="DialogBaseTheme" parent="@android:style/Theme.Dialog">
     </style>
-    <style name="GridItemMenuTheme" parent="@android:style/Theme.Dialog">
+    <style name="GridItemMenuTheme" parent="DialogBaseTheme">
+        <item name="android:windowAnimationStyle">@style/BottomWindowAnimation</item>
+        <item name="android:windowFrame">@null</item>
+		<item name="android:windowIsFloating">false</item>
+		<item name="android:backgroundDimEnabled">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+    </style>
+    
+    <style name="MenuDialogTheme" parent="DialogBaseTheme">
+        <item name="android:windowAnimationStyle">@style/BottomWindowAnimation</item>
         <item name="android:windowFrame">@null</item>
 		<item name="android:windowIsFloating">false</item>
 		<item name="android:backgroundDimEnabled">true</item>
@@ -26,5 +37,10 @@
     <style name="GridMenuItem">
         <item name="android:textSize">@dimen/font_size_large</item>
         <item name="android:textColor">@color/text_color_1</item>
+    </style>
+    
+    <style name="BottomWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/bottom_fade_in_a</item>
+        <item name="android:windowExitAnimation">@anim/bottom_fade_out_a</item>
     </style>
 </resources>

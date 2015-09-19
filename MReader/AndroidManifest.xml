@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.midcore.reader"
-    android:versionCode="010203"
-    android:versionName="1.2.3" >
+    android:versionCode="010204"
+    android:versionName="1.2.4" >
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -64,7 +64,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.midcore.reader.activity.AbountActivity"
+            android:name=".activity.AbountActivity"
             android:configChanges="keyboardHidden|navigation|orientation|screenSize"
             android:label="@string/title_activity_abount"
             android:launchMode="singleTask" >

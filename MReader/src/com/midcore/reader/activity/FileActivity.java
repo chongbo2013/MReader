@@ -39,7 +39,7 @@ public class FileActivity extends HeadActivity implements OnItemClickListener, O
 	@Override
 	public void onAttached(View content) {
 		super.onAttached(content);
-		initHead(R.string.title_activity_file, R.drawable.return_button, 0);
+		initHead(R.string.title_activity_file, R.drawable.return_button, R.drawable.bookshelf_sidebar_icon);
 		
 		mPathView = (TextView) content.findViewById(R.id.top_path);
 		mEmptyView = content.findViewById(R.id.book_file_empty);
@@ -98,6 +98,8 @@ public class FileActivity extends HeadActivity implements OnItemClickListener, O
 				return;
 			}
 			setFilePath(mCurrentPath.getParentFile());
+		} else if (v == mRight) {
+			showMenuDialog();
 		}
 	}
 	

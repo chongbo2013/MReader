@@ -92,6 +92,10 @@ public class BookPageManager implements SettingsObserver, InvalidateListener {
 		return false;
 	}
 	
+	public boolean isBookLoaded() {
+		return mReader != null && mReader.isBookLoaded();
+	}
+	
 	public void saveReadPosition() {
 		if (mReader != null && mReader.isBookLoaded() && mBook != null) {
 			mBook.readPosition = mReader.getCurrentOffset();

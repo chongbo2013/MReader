@@ -1,6 +1,58 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-</RelativeLayout>
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
+	<FrameLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="60dp"
+	    android:background="@drawable/pop_head_bg"
+	    android:layout_gravity="top" >
+	    <ImageView 
+	        android:id="@+id/back"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+	        android:onClick="back"
+	        android:src="@drawable/icon_return" />
+	</FrameLayout>
+    <LinearLayout 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="80dp"
+	    android:layout_gravity="center_horizontal"
+	    android:orientation="vertical" >
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:src="@drawable/icon" />
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="3dp"
+	        android:textSize="@dimen/font_size_large"
+	        android:textColor="@color/text_color_1"
+	        android:text="@string/app_name" />
+	</LinearLayout>
+	<LinearLayout 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="30dp"
+	    android:layout_gravity="bottom|center_horizontal"
+	    android:orientation="vertical" >
+	    <TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_horizontal"
+		    android:textSize="@dimen/font_size_large"
+			android:textColor="@color/text_color_1"
+		    android:text="QQ:85165808" />
+	    <TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_horizontal"
+		    android:textSize="@dimen/font_size_large"
+			android:textColor="@color/text_color_1"
+		    android:text="Email:lij0511@163.com" />
+	</LinearLayout>
+</FrameLayout>

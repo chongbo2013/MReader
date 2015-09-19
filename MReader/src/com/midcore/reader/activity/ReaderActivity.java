@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.glview.view.View;
@@ -50,6 +51,14 @@ public class ReaderActivity extends BaseActivity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
+	}
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		if (mBookPageManager == null || !mBookPageManager.isBookLoaded()) {
+			return false;
+		}
+		return super.dispatchTouchEvent(ev);
 	}
 	
 	private void init() {
