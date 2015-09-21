@@ -1,6 +1,6 @@
 <resources>
     
-	<style name="DialogBaseTheme" parent="@android:style/Theme.Material.Dialog.Alert">
+	<style name="DialogBaseTheme" parent="@android:style/Theme.Material.Dialog">
 	</style>
 	
 </resources>

@@ -33,6 +33,8 @@
             glview:layout_width="match_parent"
             glview:layout_height="match_parent"
             glview:clipChildren="true"
+            glview:fastScrollEnabled="true"
+            glview:fastScrollStyle="@style/Widget.FastScroll"
             glview:divider="@drawable/line_h"
             glview:listSelector="@drawable/list_selector" />
     </LinearLayout>
