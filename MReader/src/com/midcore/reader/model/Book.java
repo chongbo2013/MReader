@@ -15,7 +15,6 @@ public class Book implements Serializable {
 	public String title;
 	public String file;
 	public String presetFile;
-	public String iconUrl;
 	public String type;
 	public String cover;
 	
@@ -43,6 +42,11 @@ public class Book implements Serializable {
 	
 	public String getPresetFile() {
 		return isPreset() ? presetFile.replace(PRESET_PREFIX, "") : null;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("boot(title=%s; file=%s, type=%s)", title, file, type);
 	}
 
 }

@@ -6,25 +6,20 @@
     </style>
     
     <style name="DialogBaseTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorBackgroundCacheHint">@null</item>
     </style>
+    
     <style name="GridItemMenuTheme" parent="DialogBaseTheme">
         <item name="android:windowAnimationStyle">@style/BottomWindowAnimation</item>
-        <item name="android:windowFrame">@null</item>
 		<item name="android:windowIsFloating">false</item>
-		<item name="android:backgroundDimEnabled">true</item>
 		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowContentOverlay">@null</item>
     </style>
     
     <style name="MenuDialogTheme" parent="DialogBaseTheme">
         <item name="android:windowAnimationStyle">@style/BottomWindowAnimation</item>
-        <item name="android:windowFrame">@null</item>
 		<item name="android:windowIsFloating">false</item>
-		<item name="android:backgroundDimEnabled">true</item>
 		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowContentOverlay">@null</item>
     </style>
     
     <style name="BookDeleteConformDialogTheme" parent="DialogBaseTheme"></style>
@@ -32,7 +27,7 @@
     <style name="ReaderTheme" parent="@style/Theme.NoTitleBar.Fullscreen">
     </style>
     
-    <style name="ChapterDialog" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen"></style>
+    <style name="ChapterDialog" parent="@style/Theme.NoTitleBar.Fullscreen"></style>
 
     <style name="GridMenuItem">
         <item name="android:textSize">@dimen/font_size_large</item>

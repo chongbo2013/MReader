@@ -1,11 +1,13 @@
 <resources>
 
-    <style name="AppBaseTheme" parent="@style/Theme.Holo.NoActionBar">
+    <style name="AppBaseTheme" parent="@style/Theme.NoTitleBar">
     </style>
     <style name="DialogBaseTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorBackgroundCacheHint">@null</item>
     </style>
     
-    <style name="ReaderTheme" parent="@android:style/Theme.Holo.NoActionBar.Fullscreen">
+    <style name="ReaderTheme" parent="@style/Theme.Holo.NoActionBar.Fullscreen">
     </style>
 
 </resources>

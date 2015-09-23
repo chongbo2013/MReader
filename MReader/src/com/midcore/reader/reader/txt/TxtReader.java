@@ -1,10 +1,7 @@
 package com.midcore.reader.reader.txt;
 
-import java.io.BufferedInputStream;
 import java.io.DataInput;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -34,15 +31,20 @@ public class TxtReader extends Reader {
 	private final static String TAG = Constant.TAG;
 	
 	private final static int BUFFER_SIZE = 512 * 1024;
-	private final static int BUFFER_SIZE_WITH_NO_CHAPTER = 32 * 1024;
-	private final static int FLOATING_BUFFER_SIZE = 128 * 1024;
+	private final static int MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024;
+	private final static int FLOATING_BUFFER_SIZE = 512 * 1024;
 	
-	// "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集])(.*)"
 	private final static String LINE_BREAKER = "\r|\r\n|\n|\u2029";
-	private final static int TITILE_GROUP_INDEX = 4;
-	final Pattern mChapterPattern = Pattern.compile("(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6])((" + LINE_BREAKER + ")|((\\s)(.{0,30})(" + LINE_BREAKER + ")))");
-	final Pattern mLineBreakerPattern = Pattern.compile("(" + LINE_BREAKER + ")");
+	// "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集卷])(.*)"
+	final String[] mChapterPatterns = new String[] {"^(.{0,8})(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6\u5377])(.{0,30})$",
+													"^(.{0,8})((\u5377)?)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\\.:\uff1a\u0020\f\t])(.{0,30})$",
+													"^(.{0,8})(Chapter|chapter)(\\s{0,4})([0-9]{1,4})(.{0,30})$"};
+	Pattern mChapterPattern = null;
+	final static Pattern mLineBreakerPattern = Pattern.compile("(" + LINE_BREAKER + ")");
+	// "序(章)|前言"
+	final static Pattern mPreChapterPattern = Pattern.compile("^(\\s{0,10})((\u5e8f(\u7ae0)?)|(\u524d\u8a00))(\\s{0,10})$", Pattern.MULTILINE);
 	byte[] mLineBreaker;
+	String mLineBreakerStr;
 
 	protected List<TxtBlock> mBlocks = new ArrayList<TxtBlock>();
 	
@@ -56,6 +58,7 @@ public class TxtReader extends Reader {
 	
 	private RandomAccessFile mFileStream;
 	byte[] mBuffer = new byte[BUFFER_SIZE + FLOATING_BUFFER_SIZE];
+	int mCodeBufferLength = BUFFER_SIZE;
 	protected String mCurrentBlockString, mPreviousBlockString, mNextBlockString;
 	protected String mCurrentChapterString;
 	protected String mPreviousChapterString;
@@ -91,7 +94,6 @@ public class TxtReader extends Reader {
 		mBook = book;
 		mBookFile = new File(book.file);
 		mTotalLength = mBookFile.length();
-		codeString(mBookFile);
 		loadBookInner();
 		mBookLoaded = true;
 		return mBookLoaded;
@@ -114,8 +116,11 @@ public class TxtReader extends Reader {
 	}
 	
 	private void loadBookInner() throws IOException {
-		Log.v(TAG, "loadBook begin");
+		Log.v(TAG, "loadBook begin " + mBook);
 		mFileStream = new RandomAccessFile(mBookFile, "r");
+		int tmpLength = BUFFER_SIZE;
+		mCodeBufferLength = mFileStream.read(mBuffer, 0, tmpLength);
+		mCharset = codeString(mBuffer);
 		try {
 			loadChapters(true);
 		} catch (Exception e) {
@@ -255,7 +260,8 @@ public class TxtReader extends Reader {
 		mBitmapPage1.invalidate();
 	}
 	
-	protected void switchToPreviousChapter() {
+	protected boolean switchToPreviousChapter() {
+		boolean r = false;
 		int chapterIndex = mCurrentBlock.chapters.indexOf(mCurrentChapter);
 		if (chapterIndex > 0) {
 			mNextChapter = mCurrentChapter;
@@ -270,17 +276,19 @@ public class TxtReader extends Reader {
 				} catch (Exception e) {
 				}
 			}
+			invalidateChapters();
+			r = true;
 		} else {
-			switchToPreviousBlock();
+			r = switchToPreviousBlock();
 		}
 		mPreviousChapterString = null;
 		mPreviousChapter = null;
-		invalidateChapters();
 		System.gc();
 		System.runFinalization();
+		return r;
 	}
 	
-	private void switchToPreviousBlock() {
+	private boolean switchToPreviousBlock() {
 		int blockIndex = mBlocks.indexOf(mCurrentBlock);
 		if (blockIndex > 0) {
 			mNextChapter = mCurrentChapter;
@@ -298,12 +306,14 @@ public class TxtReader extends Reader {
 				mCurrentChapterString = mCurrentBlockString.substring(mCurrentChapter.offset, mCurrentChapter.offset + mCurrentChapter.length);
 			} catch (Exception e) {
 			}
-			mCurrentChapter.invalidate();
+			invalidateChapters();
+			return true;
 		}
 		mPreviousBlockString = null;
 		mNextBlockString = null;
 		System.gc();
 		System.runFinalization();
+		return false;
 	}
 	
 	public void switchToNextPage() {
@@ -318,7 +328,8 @@ public class TxtReader extends Reader {
 		mBitmapPage1.invalidate();
 	}
 	
-	protected void switchToNextChapter() {
+	protected boolean switchToNextChapter() {
+		boolean r = false;
 		int chapterIndex = mCurrentBlock.chapters.indexOf(mCurrentChapter);
 		if (chapterIndex < mCurrentBlock.chapters.size() - 1) {
 			mPreviousChapter = mCurrentChapter;
@@ -335,17 +346,19 @@ public class TxtReader extends Reader {
 			}
 			mNextChapterString = null;
 			mCurrentChapter.invalidate();
+			invalidateChapters();
+			r = true;
 		} else {
-			switchToNextBlock();
+			r = switchToNextBlock();
 		}
 		mNextChapter = null;
 		mNextChapterString = null;
-		invalidateChapters();
 		System.gc();
 		System.runFinalization();
+		return r;
 	}
 	
-	private void switchToNextBlock() {
+	private boolean switchToNextBlock() {
 		int blockIndex = mBlocks.indexOf(mCurrentBlock);
 		if (blockIndex < mBlocks.size() - 1) {
 			mPreviousChapter = mCurrentChapter;
@@ -363,12 +376,14 @@ public class TxtReader extends Reader {
 				mCurrentChapterString = mCurrentBlockString.substring(mCurrentChapter.offset, mCurrentChapter.offset + mCurrentChapter.length);
 			} catch (Exception e) {
 			}
-			mCurrentChapter.invalidate();
+			invalidateChapters();
+			return true;
 		}
 		mPreviousBlockString = null;
 		mNextBlockString = null;
 		System.gc();
 		System.runFinalization();
+		return false;
 	}
 	
 	public void invalidateChapters() {
@@ -504,19 +519,49 @@ public class TxtReader extends Reader {
 		}
 	}
 	
+	private Matcher matchChapterContent(String content) {
+		if (mChapterPattern != null) {
+			return mChapterPattern.matcher(content);
+		} else {
+			Matcher m;
+			for (String pattern : mChapterPatterns) {
+				Pattern p = Pattern.compile(pattern, Pattern.MULTILINE);
+				m = p.matcher(content);
+				if (m.find()) {
+					mChapterPattern = p;
+					Log.d(TAG, "select pattern=" + pattern);
+					return m;
+				}
+			}
+			return null;
+		}
+	}
+	
 	private void loadChapters(boolean hasChapter) throws IOException {
 		Log.v(TAG, "loadChapters hasChapter=" + hasChapter);
 		mHasChapter = hasChapter;
+		mCurrentChapter = null;
+		mCurrentBlock = null;
 		boolean findChapter = false;
-		mFileStream.seek(0);
 		mBlocks.clear();
+		if (hasChapter) {
+		} else {
+			mFileStream.seek(0);
+		}
 		final byte[] buffer = mBuffer;
 		int length = 0;
 		int totalLength = 0;
 		int stringLength = 0;
 		int stringTotalLength = 0;
-		int bufferSize = hasChapter ? BUFFER_SIZE : BUFFER_SIZE_WITH_NO_CHAPTER;
-		while ((length = mFileStream.read(buffer, 0, bufferSize)) > 0) {
+		int bufferSize = BUFFER_SIZE;
+		boolean preChapterChecked = false;
+		while (true) {
+			if (mBlocks.size() <= 0 && hasChapter) {
+				length = mCodeBufferLength;
+			} else {
+				length = mFileStream.read(buffer, 0, bufferSize);
+			}
+			if (length <= 0) break;
 			if (length < bufferSize || (totalLength + length) >= mTotalLength) {
 			} else {
 				length += readParagraphForward(mFileStream, buffer, length);
@@ -525,19 +570,52 @@ public class TxtReader extends Reader {
 			systemGC();
 			String str = new String(buffer, 0, (int) length, mCharset.getName());
 			stringLength = str.length();
+			boolean pcChecked = preChapterChecked;
+			if (!preChapterChecked) {
+				preChapterChecked = true;
+			}
 			if (hasChapter) {
-				Matcher m = mChapterPattern.matcher(str);
+				Matcher m = matchChapterContent(str);
+				if (m == null) {
+					// too big
+					loadChapters(false);
+					return;
+				}
 				int find = 0;
 				int end = 0;
 				int tmpend = 0;
 				int lastOffset = 0;
+				boolean first = true;
 				if (m.find(end)) {
 					if (!findChapter) {
 						findChapter = true;
 					}
 					block = new TxtBlock();
-					while (end < str.length() && m.find(end)) {
+					while (true) {
+						if (tmpend >= str.length() || !m.find(tmpend)) break;
 						find = m.start();
+						tmpend = m.end();
+						String title = null;
+						if (!pcChecked) {
+							pcChecked = true;
+							Matcher pm = mPreChapterPattern.matcher(str);
+							if (pm.find(0)) {
+								if (pm.start() < find) {
+									find = pm.start();
+									tmpend = pm.end();
+									title = pm.group();
+								}
+							}
+						}
+						if (!first && find - end < 20) {//内容太短不足以自成一章
+							continue;
+						}
+						if (first) {
+							first = false;
+						}
+						if (title == null) {
+							title = m.group();
+						}
 						if (end == 0 && find > 0) {
 							if (mBlocks.size() > 0) {
 								TxtBlock lastblock = mBlocks.get(mBlocks.size() - 1);
@@ -545,8 +623,6 @@ public class TxtReader extends Reader {
 								lastblock.length += l;
 								if (lastblock.length > bufferSize + FLOATING_BUFFER_SIZE) {
 									// too big
-									mCurrentChapter = null;
-									mCurrentBlock = null;
 									loadChapters(false);
 									return;
 								}
@@ -570,12 +646,10 @@ public class TxtReader extends Reader {
 								mCurrentChapter = head;
 							}
 						}
-						tmpend = end;
-						end = m.end();
-//						if (tmpend > 0 && tmpend - find < 20) continue;
+						end = tmpend;
 						TxtChapter chapter = new TxtChapter();
-						chapter.title = m.group();
-						chapter.name = m.group(TITILE_GROUP_INDEX);
+						chapter.title = title;
+						chapter.name = chapter.title;//m.group(TITILE_GROUP_INDEX);
 						chapter.offset = find - lastOffset;
 						if (block.chapters.size() > 0) {
 							TxtChapter last = block.chapters.get(block.chapters.size() - 1);
@@ -607,8 +681,6 @@ public class TxtReader extends Reader {
 							block.chapters.get(block.chapters.size() - 1).length += str.length() - lastOffset;
 						}
 					} else {
-						mCurrentChapter = null;
-						mCurrentBlock = null;
 						loadChapters(false);
 						return;
 					}
@@ -620,21 +692,52 @@ public class TxtReader extends Reader {
 				block.length = length;
 				block.stringOffset = stringTotalLength;
 				block.stringLength = stringLength;
-				TxtChapter chapter = new TxtChapter();
-				chapter.title = "";
-				chapter.name = "";
-				chapter.offset = 0;
-				chapter.length = block.stringLength;
-				chapter.block = block;
-				block.chapters.add(chapter);
-				if (getCurrentOffset() >= block.stringOffset) {
-					mCurrentBlock = block;
-					mCurrentChapter = chapter;
+				int sLength = stringLength;
+				int lastOffset = 0;
+				int lastLength = 0;
+				while (sLength > 0) { //分虚拟章节，提高加载速度
+					TxtChapter chapter = null;
+					if (sLength > MAX_LENGTH_WITH_NO_CHAPTER / 4) {
+						int s = (sLength > MAX_LENGTH_WITH_NO_CHAPTER ? MAX_LENGTH_WITH_NO_CHAPTER : sLength) + lastOffset + lastLength;
+						int index = str.indexOf(mLineBreakerStr, s) - s;
+						if (index < 0) {
+							index = 0;
+						}
+						chapter = new TxtChapter();
+						chapter.title = "";
+						chapter.name = "";
+						chapter.offset = lastOffset + lastLength;
+						chapter.length = s + index - lastOffset - lastLength;
+						lastOffset = chapter.offset;
+						lastLength = chapter.length;
+						chapter.block = block;
+						block.chapters.add(chapter);
+						if (getCurrentOffset() >= block.stringOffset + chapter.offset) {
+							mCurrentBlock = block;
+							mCurrentChapter = chapter;
+						}
+					} else {
+						if (block.chapters.size() > 0) {
+							chapter = block.chapters.get(block.chapters.size() - 1);
+							chapter.length += sLength;
+						} else {
+							chapter = new TxtChapter();
+							chapter.title = "";
+							chapter.name = "";
+							chapter.offset = 0;
+							chapter.length = sLength;
+							chapter.block = block;
+							block.chapters.add(chapter);
+							if (getCurrentOffset() >= block.stringOffset + chapter.offset) {
+								mCurrentBlock = block;
+								mCurrentChapter = chapter;
+							}
+						}
+					}
+					sLength -= chapter.length;
 				}
 			}
 			if (hasChapter && block.length > bufferSize + FLOATING_BUFFER_SIZE) {
-				mCurrentChapter = null;
-				mCurrentBlock = null;
 				loadChapters(false);
 				return;
 			}
@@ -697,7 +800,7 @@ public class TxtReader extends Reader {
 			if (content.startsWith(chapter.title)) {
 				content = content.substring(chapter.title.length());
 				if (chapter.isTitleInContent()) {
-					offset = chapter.title.length();
+//					offset = chapter.title.length();
 				}
 			}
 		}
@@ -889,29 +992,9 @@ public class TxtReader extends Reader {
 	 * @throws IOException 
      * @throws Exception
      */
-    private void codeString(File file) throws IOException {
-        BufferedInputStream bin = null;
-        int p = 0;
+    private Charset codeString(byte[] buffer) throws IOException {
+    	int p = (buffer[0] << 8) + buffer[1];
         Charset code = null;
-        int tmpLength = 5 * 1024;
-        try {
-            bin = new BufferedInputStream(new FileInputStream(file));
-            try {
-                p = (bin.read() << 8) + bin.read();
-                tmpLength = bin.read(mBuffer, 0, tmpLength);
-            } catch (IOException e) {
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            bin = null;
-        } finally {
-        	if (bin != null) {
-        		try {
-					bin.close();
-				} catch (IOException e) {
-				}
-        	}
-        }
         switch (p) {
         case 0xefbb:
             code = Charset.UTF8;
@@ -925,20 +1008,28 @@ public class TxtReader extends Reader {
         default:
             code = Charset.GBK;
         }
-        mCharset = code;
-        String s = new String(mBuffer, 0, tmpLength, mCharset.getName());
-        Matcher m = mLineBreakerPattern.matcher(s);
-        if (m.find(0)) {
-        	mLineBreaker = m.group().getBytes(mCharset.getName());
-        } else {
-        	if (mCharset == Charset.UTF16LE) {
-        		mLineBreaker = new byte[] {0x0a, 0x00};
-        	} else if (mCharset == Charset.UTF16BE) {
-        		mLineBreaker = new byte[]{0x00, 0x0a};
-        	} else {
-        		mLineBreaker = new byte[]{0x0a};
-        	}
+        int tmpLength = 5 * 1024;
+        if (tmpLength > mCodeBufferLength) {
+        	tmpLength = mCodeBufferLength;
         }
+        String str = new String(buffer, 0, tmpLength, code.getName());
+        if (mLineBreaker == null) {
+			Matcher m = mLineBreakerPattern.matcher(str);
+			if (m.find(0)) {
+				mLineBreakerStr = m.group();
+				mLineBreaker = mLineBreakerStr.getBytes(code.getName());
+			} else {
+				if (mCharset == Charset.UTF16LE) {
+					mLineBreaker = new byte[] {0x0a, 0x00};
+				} else if (mCharset == Charset.UTF16BE) {
+					mLineBreaker = new byte[]{0x00, 0x0a};
+				} else {
+					mLineBreaker = new byte[]{0x0a};
+				}
+				mLineBreakerStr = new String(mLineBreaker, mCharset.getName());
+			}
+		}
+        return code;
     }
 
 	@Override
@@ -1010,8 +1101,12 @@ public class TxtReader extends Reader {
 			}
 		}
 		if (toChapter != null) {
-			seekToChapter(toChapter);
+			boolean c = seekToChapter(toChapter);
 			setCurrentOffset(offset);
+			if (!c) {
+				invalidatePages();
+				findCurrentPage();
+			}
 			return true;
 		}
 		return false;
@@ -1027,10 +1122,11 @@ public class TxtReader extends Reader {
 		if (mPreviousChapter != null) {
 			return seekToChapter(mPreviousChapter);
 		} else {
-			switchToPreviousChapter();
-			resetCurrentOffset(mCurrentBlock, mCurrentChapter, null);
-			invalidateChapters();
-			invalidatePages();
+			if (switchToPreviousChapter()) {
+				resetCurrentOffset(mCurrentBlock, mCurrentChapter, null);
+				invalidateChapters();
+				invalidatePages();
+			}
 			return true;
 		}
 	}
@@ -1041,12 +1137,14 @@ public class TxtReader extends Reader {
 		if (mNextChapter != null) {
 			return seekToChapter(mNextChapter);
 		} else {
-			switchToNextChapter();
-			resetCurrentOffset(mCurrentBlock, mCurrentChapter, null);
-			invalidateChapters();
-			invalidatePages();
-			return true;
+			if (switchToNextChapter()) {
+				resetCurrentOffset(mCurrentBlock, mCurrentChapter, null);
+				invalidateChapters();
+				invalidatePages();
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	protected void resetCurrentOffset(TxtBlock block, TxtChapter chapter, TxtPage page) {

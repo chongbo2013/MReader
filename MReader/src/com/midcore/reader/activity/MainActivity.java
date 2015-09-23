@@ -97,7 +97,7 @@ public class MainActivity extends HeadActivity implements OnItemClickListener, O
     public void onAttached(View content) {
     	super.onAttached(content);
     	
-    	initHead(R.string.title_activity_main, 0, R.drawable.bookshelf_sidebar_icon);
+    	initHead(R.string.title_activity_main, R.drawable.bookshelf_sidebar_icon, /*R.drawable.bookstore_icon*/0);
     	
     	mGridView = (GridView) content.findViewById(R.id.book_grid);
     	mGridView.setOnItemClickListener(this);
@@ -109,7 +109,7 @@ public class MainActivity extends HeadActivity implements OnItemClickListener, O
     
     @Override
     public void onClick(View v) {
-    	if (v == mRight) {
+    	if (v == mLeft) {
     		showMenuDialog();
     	}
     }
