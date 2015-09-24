@@ -42,8 +42,8 @@ public class TxtReader extends Reader {
 	private final static String LINE_BREAKER = "\r|\r\n|\n|\u2029";
 	// "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集卷])(.*)"
 	final String[] mChapterPatterns = new String[] {"^(.{0,8})(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6\u5377])(.{0,30})$",
-													"^(.{0,8})((\u5377)?)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\\.:\uff1a\u0020\f\t])(.{0,30})$",
-													"^(.{0,8})(Chapter|chapter)(\\s{0,4})([0-9]{1,4})(.{0,30})$"};
+													"^(.{0,4})((\u5377)?)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\\.:\uff1a\u0020\f\t])(.{0,30})$",
+													"^(.{0,4})(Chapter|chapter)(\\s{0,4})([0-9]{1,4})(.{0,30})$"};
 	Pattern mChapterPattern = null;
 	final static Pattern mLineBreakerPattern = Pattern.compile("(" + LINE_BREAKER + ")");
 	// "序(章)|前言"
@@ -127,7 +127,7 @@ public class TxtReader extends Reader {
 		mCodeBufferLength = mFileStream.read(mBuffer, 0, tmpLength);
 		mCharset = codeString(mBuffer);
 		try {
-			loadChapters(true);
+			loadChapters(mCodeBufferLength > 0);
 		} catch (Exception e) {
 			Log.w(TAG, "loadChapters error", e);
 			// try load with out chapters.
@@ -526,12 +526,16 @@ public class TxtReader extends Reader {
 		}
 	}
 	
+	int mSelectedIndex = - 1;
+	
 	private Matcher matchChapterContent(String content) {
 		if (mChapterPattern != null) {
 			return mChapterPattern.matcher(content);
 		} else {
 			Matcher m;
-			for (String pattern : mChapterPatterns) {
+			for (int i = mSelectedIndex; i < mChapterPatterns.length; i ++) {
+				mSelectedIndex = i;
+				String pattern = mChapterPatterns[i];
 				Pattern p = Pattern.compile(pattern, Pattern.MULTILINE);
 				m = p.matcher(content);
 				if (m.find()) {
@@ -550,12 +554,21 @@ public class TxtReader extends Reader {
 	 */
 	private void loadChapters(boolean hasChapter) throws IOException {
 		Log.v(TAG, "loadChapters hasChapter=" + hasChapter);
+		int codeBufferLength = mCodeBufferLength;
+		mCodeBufferLength = 0;
+		mChapterPattern = null;
+		mSelectedIndex ++;
 		mHasChapter = hasChapter;
 		mCurrentChapter = null;
 		mCurrentBlock = null;
 		boolean findChapter = false;
 		mBlocks.clear();
+		int bufferSize = BUFFER_SIZE;
 		if (hasChapter) {
+			if (codeBufferLength == 0) {
+				mFileStream.seek(0);
+				codeBufferLength = mFileStream.read(mBuffer, 0, bufferSize);
+			}
 		} else {
 			mFileStream.seek(0);
 		}
@@ -564,11 +577,11 @@ public class TxtReader extends Reader {
 		int totalLength = 0;
 		int stringLength = 0;
 		int stringTotalLength = 0;
-		int bufferSize = BUFFER_SIZE;
 		boolean preChapterChecked = false;
+		int chapterCount = 0;
 		while (true) {
 			if (mBlocks.size() <= 0 && hasChapter) {
-				length = mCodeBufferLength;
+				length = codeBufferLength;
 			} else {
 				length = mFileStream.read(buffer, 0, bufferSize);
 			}
@@ -588,7 +601,6 @@ public class TxtReader extends Reader {
 			if (hasChapter) {
 				Matcher m = matchChapterContent(str);
 				if (m == null) {
-					// too big
 					loadChapters(false);
 					return;
 				}
@@ -627,6 +639,7 @@ public class TxtReader extends Reader {
 						if (title == null) {
 							title = m.group();
 						}
+						chapterCount ++;
 						if (end == 0 && find > 0) {
 							if (mBlocks.size() > 0) {
 								TxtBlock lastblock = mBlocks.get(mBlocks.size() - 1);
@@ -634,7 +647,7 @@ public class TxtReader extends Reader {
 								lastblock.length += l;
 								if (lastblock.length > bufferSize + FLOATING_BUFFER_SIZE) {
 									// too big
-									loadChapters(false);
+									loadChapters(chapterCount < 5);
 									return;
 								}
 								lastblock.stringLength += find;
@@ -690,6 +703,11 @@ public class TxtReader extends Reader {
 					}
 				} else {
 					if (mBlocks.size() > 0) {
+						if (length >= bufferSize) {
+							// too big
+							loadChapters(chapterCount < 5);
+							return;
+						}
 						block = mBlocks.get(mBlocks.size() - 1);
 						block.length += length;
 						block.stringLength += str.length() - lastOffset;
@@ -697,7 +715,7 @@ public class TxtReader extends Reader {
 							block.chapters.get(block.chapters.size() - 1).length += str.length() - lastOffset;
 						}
 					} else {
-						loadChapters(false);
+						loadChapters(chapterCount < 5);
 						return;
 					}
 				}
@@ -756,7 +774,7 @@ public class TxtReader extends Reader {
 				}
 			}
 			if (hasChapter && block.length > bufferSize + FLOATING_BUFFER_SIZE) {
-				loadChapters(false);
+				loadChapters(chapterCount < 5);
 				return;
 			}
 			totalLength += length;
@@ -1115,7 +1133,7 @@ public class TxtReader extends Reader {
 	
 	@Override
 	public Chapter getCurrentChapter() {
-		return mCurrentChapter;
+		return mCurrentChapter.realChapter;
 	}
 	
 	@Override
