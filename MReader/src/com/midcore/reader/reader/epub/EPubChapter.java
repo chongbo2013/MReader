@@ -13,9 +13,4 @@ public class EPubChapter extends TxtChapter {
 	
 	public Resource resource;
 	
-	@Override
-	public boolean isTitleInContent() {
-		return false;
-	}
-
 }

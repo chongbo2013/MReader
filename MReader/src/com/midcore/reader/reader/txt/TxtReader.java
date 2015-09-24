@@ -26,13 +26,18 @@ import com.midcore.reader.reader.cache.LocalCache;
 import com.midcore.reader.reader.charset.Charset;
 import com.midcore.reader.reader.txt.TxtLine.LineType;
 
+/**
+ * TODO 代码结构有待优化
+ * @author lijing.lj
+ */
 public class TxtReader extends Reader {
 	
 	private final static String TAG = Constant.TAG;
 	
 	private final static int BUFFER_SIZE = 512 * 1024;
+	private final static int MAX_CHAPTER_LENGTH = 8 * 1024;
 	private final static int MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024;
-	private final static int FLOATING_BUFFER_SIZE = 512 * 1024;
+	private final static int FLOATING_BUFFER_SIZE = 128 * 1024;
 	
 	private final static String LINE_BREAKER = "\r|\r\n|\n|\u2029";
 	// "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集卷])(.*)"
@@ -289,6 +294,7 @@ public class TxtReader extends Reader {
 	}
 	
 	private boolean switchToPreviousBlock() {
+		boolean r = false;
 		int blockIndex = mBlocks.indexOf(mCurrentBlock);
 		if (blockIndex > 0) {
 			mNextChapter = mCurrentChapter;
@@ -306,14 +312,14 @@ public class TxtReader extends Reader {
 				mCurrentChapterString = mCurrentBlockString.substring(mCurrentChapter.offset, mCurrentChapter.offset + mCurrentChapter.length);
 			} catch (Exception e) {
 			}
+			r = true;
 			invalidateChapters();
-			return true;
 		}
 		mPreviousBlockString = null;
 		mNextBlockString = null;
 		System.gc();
 		System.runFinalization();
-		return false;
+		return r;
 	}
 	
 	public void switchToNextPage() {
@@ -359,6 +365,7 @@ public class TxtReader extends Reader {
 	}
 	
 	private boolean switchToNextBlock() {
+		boolean r = false;
 		int blockIndex = mBlocks.indexOf(mCurrentBlock);
 		if (blockIndex < mBlocks.size() - 1) {
 			mPreviousChapter = mCurrentChapter;
@@ -377,13 +384,13 @@ public class TxtReader extends Reader {
 			} catch (Exception e) {
 			}
 			invalidateChapters();
-			return true;
+			r = true;
 		}
 		mPreviousBlockString = null;
 		mNextBlockString = null;
 		System.gc();
 		System.runFinalization();
-		return false;
+		return r;
 	}
 	
 	public void invalidateChapters() {
@@ -537,6 +544,10 @@ public class TxtReader extends Reader {
 		}
 	}
 	
+	/**
+	 * @param hasChapter
+	 * @throws IOException
+	 */
 	private void loadChapters(boolean hasChapter) throws IOException {
 		Log.v(TAG, "loadChapters hasChapter=" + hasChapter);
 		mHasChapter = hasChapter;
@@ -629,7 +640,10 @@ public class TxtReader extends Reader {
 								lastblock.stringLength += find;
 								lastOffset = find;
 								if (lastblock.chapters.size() > 0) {
-									lastblock.chapters.get(lastblock.chapters.size() - 1).length += find;
+									TxtChapter lastChapter = lastblock.chapters.get(lastblock.chapters.size() - 1);
+									int oldLength = lastChapter.length;
+									lastChapter.length += find;
+									splitVirtualChapters(lastChapter, str, oldLength);
 								}
 								totalLength += l;
 								length -= l;
@@ -654,16 +668,18 @@ public class TxtReader extends Reader {
 						if (block.chapters.size() > 0) {
 							TxtChapter last = block.chapters.get(block.chapters.size() - 1);
 							last.length = find - lastOffset - last.offset;
+							splitVirtualChapters(last, str, 0);
 						}
-						block.chapters.add(chapter);
-						chapter.block = block;
 						if (getCurrentOffset() >= stringTotalLength + chapter.offset) {
 							mCurrentChapter = chapter;
 						}
+						block.chapters.add(chapter);
+						chapter.block = block;
 					}
 					if (block.chapters.size() > 0) {
 						TxtChapter last = block.chapters.get(block.chapters.size() - 1);
 						last.length = str.length() - last.offset - lastOffset;
+						splitVirtualChapters(last, str, 0);
 					}
 					block.offset = totalLength;
 					block.length = length;
@@ -704,6 +720,7 @@ public class TxtReader extends Reader {
 							index = 0;
 						}
 						chapter = new TxtChapter();
+						chapter.virtual = true;
 						chapter.title = "";
 						chapter.name = "";
 						chapter.offset = lastOffset + lastLength;
@@ -722,6 +739,7 @@ public class TxtReader extends Reader {
 							chapter.length += sLength;
 						} else {
 							chapter = new TxtChapter();
+							chapter.virtual = true;
 							chapter.title = "";
 							chapter.name = "";
 							chapter.offset = 0;
@@ -763,6 +781,56 @@ public class TxtReader extends Reader {
 		System.runFinalization();
 	}
 	
+	private void splitVirtualChapters(TxtChapter lastchapter, String str, int oldLength) {//分虚拟章节，提高加载速度
+		if (lastchapter.length > MAX_CHAPTER_LENGTH) {
+			int sLength = lastchapter.length - oldLength - MAX_CHAPTER_LENGTH;
+			int lastOffset = lastchapter.offset + MAX_CHAPTER_LENGTH;
+			int lastLength = 0;
+			boolean checked = false;
+			while (sLength > 0) {
+				TxtChapter chapter = null;
+				if (sLength > MAX_CHAPTER_LENGTH / 4) {
+					int s = (sLength > MAX_CHAPTER_LENGTH ? MAX_CHAPTER_LENGTH : sLength) + lastOffset + lastLength;
+					int index = str.indexOf(mLineBreakerStr, s) - s;
+					if (index < 0) {
+						index = 0;
+					}
+					if (index >= sLength) {
+						index = sLength - 1;
+					}
+					chapter = new TxtChapter();
+					chapter.virtual = true;
+					chapter.realChapter = lastchapter.realChapter;
+					chapter.title = "";
+					chapter.name = "";
+					chapter.offset = lastOffset + lastLength;
+					chapter.length = s + index - lastOffset - lastLength;
+					lastOffset = chapter.offset;
+					lastLength = chapter.length;
+					chapter.block = lastchapter.block;
+					lastchapter.block.chapters.add(chapter);
+					if (!checked) {
+						lastchapter.length = chapter.offset - lastchapter.offset;
+						checked = true;
+					}
+					sLength -= chapter.length;
+					if (mCurrentChapter == null || mCurrentChapter.realChapter == chapter.realChapter) {
+						if (getCurrentOffset() >= calculateOffset(chapter.block, chapter, null)) {
+							mCurrentChapter = chapter;
+						}
+					}
+				} else {
+					chapter = lastchapter.block.chapters.get(lastchapter.block.chapters.size() - 1);
+					if (chapter == lastchapter) {
+					} else {
+						chapter.length += sLength;
+					}
+					break;
+				}
+			}
+		}
+	}
+	
 	protected void loadBuffer() {
 		mCurrentBlockString = loadBuffer(mCurrentBlock);
 		mPreviousBlockString = null;
@@ -799,9 +867,6 @@ public class TxtReader extends Reader {
 			title = true;
 			if (content.startsWith(chapter.title)) {
 				content = content.substring(chapter.title.length());
-				if (chapter.isTitleInContent()) {
-//					offset = chapter.title.length();
-				}
 			}
 		}
 		chapter.pages.clear();
@@ -942,7 +1007,7 @@ public class TxtReader extends Reader {
     	if (mBookTitle == null) {
     		mBookTitle = measureText(mInfoPaint, mBook.title, contentWidth * 2 / 5);
     	}
-    	String title = measureText(mInfoPaint, page.chapter.title, contentWidth * 2 / 5);
+    	String title = measureText(mInfoPaint, page.chapter.realChapter.title, contentWidth * 2 / 5);
 		float y = mTopMargin;
 		float x = mLeftMargin;
 		Paint paint = mPaint;
@@ -1039,7 +1104,11 @@ public class TxtReader extends Reader {
 		}
 		List<Chapter> list = new ArrayList<Chapter>();
 		for (TxtBlock block : mBlocks) {
-			list.addAll(block.chapters);
+			for (Chapter chapter : block.chapters) {
+				if (!chapter.header && !chapter.virtual) {
+					list.add(chapter);
+				}
+			}
 		}
 		return list;
 	}
@@ -1119,28 +1188,33 @@ public class TxtReader extends Reader {
 	@Override
 	public boolean seekToPreviousChapter() {
 		if (!mBookLoaded || !mHasChapter) return false;
-		if (mPreviousChapter != null) {
-			return seekToChapter(mPreviousChapter);
-		} else {
-			if (switchToPreviousChapter()) {
-				resetCurrentOffset(mCurrentBlock, mCurrentChapter, null);
-				invalidateChapters();
-				invalidatePages();
-			}
+		int chapterIndex = mCurrentBlock.chapters.indexOf(mCurrentChapter.realChapter);
+		if (chapterIndex > 0) {
+			seekToChapter(mCurrentBlock.chapters.get(chapterIndex - 1).realChapter);
 			return true;
+		} else {
+			int blockIndex = mBlocks.indexOf(mCurrentBlock);
+			if (blockIndex > 0) {
+				TxtBlock block = mBlocks.get(blockIndex - 1);
+				seekToChapter(block.chapters.get(block.chapters.size() - 1).realChapter);
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	@Override
 	public boolean seekToNextChapter() {
 		if (!mBookLoaded || !mHasChapter) return false;
-		if (mNextChapter != null) {
-			return seekToChapter(mNextChapter);
+		int chapterIndex = mCurrentBlock.chapters.indexOf(mCurrentChapter.realChapter);
+		if (chapterIndex < mCurrentBlock.chapters.size() - 1) {
+			seekToChapter(mCurrentBlock.chapters.get(chapterIndex + 1).realChapter);
+			return true;
 		} else {
-			if (switchToNextChapter()) {
-				resetCurrentOffset(mCurrentBlock, mCurrentChapter, null);
-				invalidateChapters();
-				invalidatePages();
+			int blockIndex = mBlocks.indexOf(mCurrentBlock);
+			if (blockIndex > mBlocks.size() - 1) {
+				TxtBlock block = mBlocks.get(blockIndex + 1);
+				seekToChapter(block.chapters.get(block.chapters.size() - 1).realChapter);
 				return true;
 			}
 		}

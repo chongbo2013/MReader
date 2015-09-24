@@ -16,13 +16,10 @@ public class TxtChapter extends Chapter {
 	
 	public transient List<TxtPage> pages = new ArrayList<TxtPage>();
 	public transient TxtPage currentPage;
+	public transient TxtChapter realChapter = this;
 	
 	public int getCurrentPageIndex() {
 		return currentPage != null ? pages.indexOf(currentPage) : -1;
-	}
-	
-	public boolean isTitleInContent() {
-		return true;
 	}
 
 	@Override

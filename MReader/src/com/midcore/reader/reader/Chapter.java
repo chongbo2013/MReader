@@ -28,8 +28,10 @@ public class Chapter implements Serializable {
 	public String name;
 	
 	public boolean header = false;
+	public boolean virtual = false;
 	
 	public transient boolean valid = false;
+	
 	
 	public boolean isValid() {
 		return valid;

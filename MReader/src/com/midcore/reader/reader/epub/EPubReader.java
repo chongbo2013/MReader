@@ -117,7 +117,8 @@ public class EPubReader extends TxtReader {
 		String content = "";
 		try {
 			content = Html.fromHtml(new String(chapter.resource.getData(), chapter.resource.getInputEncoding())).toString();
-		} catch (Exception e) {
+		} catch (Throwable tr) {
+			Log.w(TAG, "loadBuffer", tr);
 		}
 		chapter.offset = 0;
 		chapter.length = content.length();
