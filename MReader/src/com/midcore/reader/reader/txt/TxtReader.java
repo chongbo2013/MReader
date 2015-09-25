@@ -42,7 +42,8 @@ public class TxtReader extends Reader {
 	private final static String LINE_BREAKER = "\r|\r\n|\n|\u2029";
 	// "(第)([0-9零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10})([章节回集卷])(.*)"
 	final String[] mChapterPatterns = new String[] {"^(.{0,8})(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6\u5377])(.{0,30})$",
-													"^(\\s{0,4})([\\(]?(\u5377)?)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\\.:\uff1a\u0020\f\t])(.{0,30})$",
+													"^(\\s{0,4})([\\(\u3010\u300a]?(\u5377)?)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\\.:\uff1a\u0020\f\t])(.{0,30})$",
+													"^(\\s{0,4})([\\(\uff08\u3010\u300a])(.{0,30})([\\)\uff09\u3011\u300b])(\\s{0,2})$",
 													"^(.{0,4})(Chapter|chapter)(\\s{0,4})([0-9]{1,4})(.{0,30})$"};
 	Pattern mChapterPattern = null;
 	final static Pattern mLineBreakerPattern = Pattern.compile("(" + LINE_BREAKER + ")");
@@ -656,7 +657,7 @@ public class TxtReader extends Reader {
 									TxtChapter lastChapter = lastblock.chapters.get(lastblock.chapters.size() - 1);
 									int oldLength = lastChapter.length;
 									lastChapter.length += find;
-									splitVirtualChapters(lastChapter, str, oldLength);
+									splitVirtualChapters(lastChapter, str, 0, oldLength);
 								}
 								totalLength += l;
 								length -= l;
@@ -681,7 +682,7 @@ public class TxtReader extends Reader {
 						if (block.chapters.size() > 0) {
 							TxtChapter last = block.chapters.get(block.chapters.size() - 1);
 							last.length = find - lastOffset - last.offset;
-							splitVirtualChapters(last, str, 0);
+							splitVirtualChapters(last, str, last.offset + lastOffset, 0);
 						}
 						if (getCurrentOffset() >= stringTotalLength + chapter.offset) {
 							mCurrentChapter = chapter;
@@ -692,7 +693,7 @@ public class TxtReader extends Reader {
 					if (block.chapters.size() > 0) {
 						TxtChapter last = block.chapters.get(block.chapters.size() - 1);
 						last.length = str.length() - last.offset - lastOffset;
-						splitVirtualChapters(last, str, 0);
+						splitVirtualChapters(last, str, last.offset + lastOffset, 0);
 					}
 					block.offset = totalLength;
 					block.length = length;
@@ -712,7 +713,10 @@ public class TxtReader extends Reader {
 						block.length += length;
 						block.stringLength += str.length() - lastOffset;
 						if (block.chapters.size() > 0) {
-							block.chapters.get(block.chapters.size() - 1).length += str.length() - lastOffset;
+							TxtChapter lastChapter = block.chapters.get(block.chapters.size() - 1);
+							int oldLength = lastChapter.length;
+							lastChapter.length += str.length() - lastOffset;
+							splitVirtualChapters(lastChapter, str, 0, oldLength);
 						}
 					} else {
 						loadChapters(chapterCount < 5);
@@ -799,39 +803,37 @@ public class TxtReader extends Reader {
 		System.runFinalization();
 	}
 	
-	private void splitVirtualChapters(TxtChapter lastchapter, String str, int oldLength) {//分虚拟章节，提高加载速度
+	private void splitVirtualChapters(TxtChapter lastchapter, String str, int start, int oldLength) {//分虚拟章节，提高加载速度
 		if (lastchapter.length > MAX_CHAPTER_LENGTH) {
-			int sLength = lastchapter.length - oldLength - MAX_CHAPTER_LENGTH;
-			int lastOffset = lastchapter.offset + MAX_CHAPTER_LENGTH;
-			int lastLength = 0;
-			boolean checked = false;
-			while (sLength > 0) {
+			int cacheLength = lastchapter.length - oldLength;
+			int index = str.indexOf(mLineBreakerStr, start + MAX_CHAPTER_LENGTH) - start - MAX_CHAPTER_LENGTH;
+			if (index < 0) return;
+			if (index + MAX_CHAPTER_LENGTH >= cacheLength) return;
+			lastchapter.length = oldLength + MAX_CHAPTER_LENGTH + index;
+			
+			int lastOffset = lastchapter.offset;
+			int lastLength = lastchapter.length;
+			start += MAX_CHAPTER_LENGTH + index;
+			int containLength = cacheLength - index - MAX_CHAPTER_LENGTH;
+			while (containLength > 0) {
 				TxtChapter chapter = null;
-				if (sLength > MAX_CHAPTER_LENGTH / 4) {
-					int s = (sLength > MAX_CHAPTER_LENGTH ? MAX_CHAPTER_LENGTH : sLength) + lastOffset + lastLength;
-					int index = str.indexOf(mLineBreakerStr, s) - s;
-					if (index < 0) {
-						index = 0;
-					}
-					if (index >= sLength) {
-						index = sLength - 1;
-					}
+				int l = (containLength > MAX_LENGTH_WITH_NO_CHAPTER ? MAX_LENGTH_WITH_NO_CHAPTER : containLength);
+				int s = l + start;
+				index = str.indexOf(mLineBreakerStr, s) - s;
+				if (containLength > MAX_CHAPTER_LENGTH / 4 && index >= 0 && index < containLength) {
 					chapter = new TxtChapter();
 					chapter.virtual = true;
 					chapter.realChapter = lastchapter.realChapter;
 					chapter.title = "";
 					chapter.name = "";
 					chapter.offset = lastOffset + lastLength;
-					chapter.length = s + index - lastOffset - lastLength;
+					chapter.length = l + index;
 					lastOffset = chapter.offset;
 					lastLength = chapter.length;
 					chapter.block = lastchapter.block;
 					lastchapter.block.chapters.add(chapter);
-					if (!checked) {
-						lastchapter.length = chapter.offset - lastchapter.offset;
-						checked = true;
-					}
-					sLength -= chapter.length;
+					containLength -= chapter.length;
+					start += chapter.length;
 					if (mCurrentChapter == null || mCurrentChapter.realChapter == chapter.realChapter) {
 						if (getCurrentOffset() >= calculateOffset(chapter.block, chapter, null)) {
 							mCurrentChapter = chapter;
@@ -839,10 +841,7 @@ public class TxtReader extends Reader {
 					}
 				} else {
 					chapter = lastchapter.block.chapters.get(lastchapter.block.chapters.size() - 1);
-					if (chapter == lastchapter) {
-					} else {
-						chapter.length += sLength;
-					}
+					chapter.length += containLength;
 					break;
 				}
 			}
