@@ -1075,21 +1075,14 @@ public class TxtReader extends Reader {
      * @throws Exception
      */
     private Charset codeString(byte[] buffer) throws IOException {
-    	int p = (buffer[0] << 8) + buffer[1];
-        Charset code = null;
-        switch (p) {
-        case 0xefbb:
-            code = Charset.UTF8;
-            break;
-        case 0xfffe:
-            code = Charset.UNICODE;
-            break;
-        case 0xfeff:
-            code = Charset.UTF16BE;
-            break;
-        default:
-            code = Charset.GBK;
-        }
+        Charset code = Charset.GBK;
+        if (buffer[0] == -1 && buffer[1] == -2 )  
+            code = Charset.UTF16LE;  
+        if (buffer[0] == -2 && buffer[1] == -1 )  
+            code = Charset.UTF16BE;  
+        if(buffer[0]==-17 && buffer[1]==-69 && buffer[2] ==-65)  
+            code = Charset.UTF8;  
+        Log.d(TAG, "codeString=" + code.getName());
         int tmpLength = 5 * 1024;
         if (tmpLength > mCodeBufferLength) {
         	tmpLength = mCodeBufferLength;
@@ -1224,16 +1217,19 @@ public class TxtReader extends Reader {
 	public boolean seekToNextChapter() {
 		if (!mBookLoaded || !mHasChapter) return false;
 		int chapterIndex = mCurrentBlock.chapters.indexOf(mCurrentChapter.realChapter);
-		if (chapterIndex < mCurrentBlock.chapters.size() - 1) {
-			seekToChapter(mCurrentBlock.chapters.get(chapterIndex + 1).realChapter);
-			return true;
-		} else {
-			int blockIndex = mBlocks.indexOf(mCurrentBlock);
-			if (blockIndex > mBlocks.size() - 1) {
-				TxtBlock block = mBlocks.get(blockIndex + 1);
-				seekToChapter(block.chapters.get(block.chapters.size() - 1).realChapter);
+		while (chapterIndex < mCurrentBlock.chapters.size() - 1) {
+			TxtChapter next = mCurrentBlock.chapters.get(chapterIndex + 1).realChapter;
+			if (next != mCurrentChapter.realChapter) {
+				seekToChapter(next);
 				return true;
 			}
+			chapterIndex ++;
+		}
+		int blockIndex = mBlocks.indexOf(mCurrentBlock);
+		if (blockIndex > mBlocks.size() - 1) {
+			TxtBlock block = mBlocks.get(blockIndex + 1);
+			seekToChapter(block.chapters.get(block.chapters.size() - 1).realChapter);
+			return true;
 		}
 		return false;
 	}
