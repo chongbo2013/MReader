@@ -90,7 +90,9 @@ public class ChaptersDialog extends GLDialog implements OnItemClickListener {
 		mHeadView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				dismiss();
+				try {
+					dismiss();
+				} catch(Throwable tr) {}
 			}
 		});
 		mTitleView = (TextView) content.findViewById(R.id.title_view);
@@ -112,7 +114,9 @@ public class ChaptersDialog extends GLDialog implements OnItemClickListener {
 		if (chapter != mCurrentChapter) {
 			mBookPageManager.seekToChapter(chapter);
 		}
-		dismiss();
+		try {
+			dismiss();
+		} catch(Throwable tr) {}
 	}
 
 }

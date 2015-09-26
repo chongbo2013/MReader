@@ -15,6 +15,11 @@ public class BookException extends Exception {
 		this.errorCode = errorCode;
 	}
 	
+	public BookException(ErrorCode errorCode, String message, Throwable cause) {
+		super(message, cause);
+		this.errorCode = errorCode;
+	}
+	
 	public ErrorCode getErrorCode() {
 		return errorCode;
 	}

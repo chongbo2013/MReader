@@ -321,10 +321,7 @@ public abstract class Reader implements SettingsObserver {
 	
 	public void destroy() {
 		ReadSettings.removeSettingsObserver(this);
-		if (mBatteryReceiver != null) {
-			mContext.unregisterReceiver(mBatteryReceiver);
-			mBatteryReceiver = null;
-		}
+		unregisterReceiver();
 		System.gc();
 		System.gc();
 		System.runFinalization();

@@ -87,7 +87,7 @@ public class BookPageManager implements SettingsObserver, InvalidateListener {
 				return true;
 			}
 		} catch (Exception e) {
-			throw new BookException(ErrorCode.BOOK_LOAD_FAIL, e);
+			throw new BookException(ErrorCode.BOOK_LOAD_FAIL, "openBookInternal failed:" + file, e);
 		}
 		return false;
 	}

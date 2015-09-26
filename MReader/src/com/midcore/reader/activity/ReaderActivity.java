@@ -174,9 +174,14 @@ public class ReaderActivity extends BaseActivity {
 	}
 	
 	@Override
+	protected void onStop() {
+		cancelLoading();
+		super.onStop();
+	}
+	
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		cancelLoading();
 	}
 	
 	private void showLoading() {
@@ -188,7 +193,9 @@ public class ReaderActivity extends BaseActivity {
 	
 	private void cancelLoading() {
 		if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
-			mLoadingDialog.dismiss();
+			try {
+    			mLoadingDialog.dismiss();
+			} catch(Throwable tr) {}
 			mLoadingDialog = null;
 		}
 	}

@@ -44,11 +44,12 @@ public class TxtReader extends Reader {
 	final String[] mChapterPatterns = new String[] {"^(.{0,8})(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6\u5377])(.{0,30})$",
 													"^(\\s{0,4})([\\(\u3010\u300a]?(\u5377)?)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\\.:\uff1a\u0020\f\t])(.{0,30})$",
 													"^(\\s{0,4})([\\(\uff08\u3010\u300a])(.{0,30})([\\)\uff09\u3011\u300b])(\\s{0,2})$",
+													"^(\\s{0,4})(\u6b63\u6587)(.{0,20})$",
 													"^(.{0,4})(Chapter|chapter)(\\s{0,4})([0-9]{1,4})(.{0,30})$"};
 	Pattern mChapterPattern = null;
 	final static Pattern mLineBreakerPattern = Pattern.compile("(" + LINE_BREAKER + ")");
 	// "序(章)|前言"
-	final static Pattern mPreChapterPattern = Pattern.compile("^(\\s{0,10})((\u5e8f(\u7ae0)?)|(\u524d\u8a00))(\\s{0,10})$", Pattern.MULTILINE);
+	final static Pattern mPreChapterPattern = Pattern.compile("^(\\s{0,10})((\u5e8f[\u7ae0\u8a00]?)|(\u524d\u8a00)|(\u6954\u5b50))(\\s{0,10})$", Pattern.MULTILINE);
 	byte[] mLineBreaker;
 	String mLineBreakerStr;
 
@@ -255,15 +256,17 @@ public class TxtReader extends Reader {
 	}
 	
 	public void switchToPreviousPage() {
-		int pageIndex = mCurrentChapter.pages.indexOf(mCurrentChapter.currentPage);
-		if (pageIndex <= 0) {
-			switchToPreviousChapter();
-		} else {
-			mCurrentChapter.currentPage = mCurrentChapter.pages.get(pageIndex - 1);
-			resetCurrentOffset(mCurrentChapter.block, mCurrentChapter, mCurrentChapter.currentPage);
-		}
-		mBitmapPage.invalidate();
-		mBitmapPage1.invalidate();
+		try {
+			int pageIndex = mCurrentChapter.pages.indexOf(mCurrentChapter.currentPage);
+			if (pageIndex <= 0) {
+				switchToPreviousChapter();
+			} else {
+				mCurrentChapter.currentPage = mCurrentChapter.pages.get(pageIndex - 1);
+				resetCurrentOffset(mCurrentChapter.block, mCurrentChapter, mCurrentChapter.currentPage);
+			}
+			mBitmapPage.invalidate();
+			mBitmapPage1.invalidate();
+		} catch (Throwable tr) {}
 	}
 	
 	protected boolean switchToPreviousChapter() {
@@ -324,15 +327,17 @@ public class TxtReader extends Reader {
 	}
 	
 	public void switchToNextPage() {
-		int pageIndex = mCurrentChapter.pages.indexOf(mCurrentChapter.currentPage);
-		if (pageIndex + 1 >= mCurrentChapter.pages.size()) {
-			switchToNextChapter();
-		} else {
-			mCurrentChapter.currentPage = mCurrentChapter.pages.get(pageIndex + 1);
-			resetCurrentOffset(mCurrentChapter.block, mCurrentChapter, mCurrentChapter.currentPage);
-		}
-		mBitmapPage.invalidate();
-		mBitmapPage1.invalidate();
+		try {
+			int pageIndex = mCurrentChapter.pages.indexOf(mCurrentChapter.currentPage);
+			if (pageIndex + 1 >= mCurrentChapter.pages.size()) {
+				switchToNextChapter();
+			} else {
+				mCurrentChapter.currentPage = mCurrentChapter.pages.get(pageIndex + 1);
+				resetCurrentOffset(mCurrentChapter.block, mCurrentChapter, mCurrentChapter.currentPage);
+			}
+			mBitmapPage.invalidate();
+			mBitmapPage1.invalidate();
+		} catch (Throwable tr) {}
 	}
 	
 	protected boolean switchToNextChapter() {
@@ -817,7 +822,7 @@ public class TxtReader extends Reader {
 			int containLength = cacheLength - index - MAX_CHAPTER_LENGTH;
 			while (containLength > 0) {
 				TxtChapter chapter = null;
-				int l = (containLength > MAX_LENGTH_WITH_NO_CHAPTER ? MAX_LENGTH_WITH_NO_CHAPTER : containLength);
+				int l = (containLength > MAX_CHAPTER_LENGTH ? MAX_CHAPTER_LENGTH : containLength);
 				int s = l + start;
 				index = str.indexOf(mLineBreakerStr, s) - s;
 				if (containLength > MAX_CHAPTER_LENGTH / 4 && index >= 0 && index < containLength) {

@@ -88,7 +88,9 @@ public class MainActivity extends HeadActivity implements OnItemClickListener, O
     
     private void cancelLoading() {
     	if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
-    		mLoadingDialog.dismiss();
+    		try {
+    			mLoadingDialog.dismiss();
+			} catch(Throwable tr) {}
     		mLoadingDialog = null;
     	}
     }
@@ -150,7 +152,9 @@ public class MainActivity extends HeadActivity implements OnItemClickListener, O
     protected void onStop() {
     	super.onStop();
     	if (mItemMenuDialog != null) {
-			mItemMenuDialog.dismiss();
+    		try {
+    			mItemMenuDialog.dismiss();
+			} catch(Throwable tr) {}
 		}
     }
     
@@ -178,10 +182,14 @@ public class MainActivity extends HeadActivity implements OnItemClickListener, O
 			@Override
 			public void run() {
 				if (mItemMenuDialog != null) {
-					mItemMenuDialog.dismiss();
+					try {
+						mItemMenuDialog.dismiss();
+					} catch(Throwable tr) {}
 				}
 				mItemMenuDialog = new GridItemMenuDialog(MainActivity.this, (Book) mAdapter.getItem(position));
-				mItemMenuDialog.show();
+				try {
+					mItemMenuDialog.show();
+				} catch(Throwable tr) {}
 			}
 		});
 		return true;

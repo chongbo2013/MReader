@@ -93,10 +93,17 @@ public class BottomMenuLayout extends LinearLayout implements OnClickListener, O
 	}
 	
 	private void dismissChaptersDialog() {
-		if (mChaptersDialog != null) {
-			mChaptersDialog.dismiss();
-			mChaptersDialog = null;
-		}
+		postToAndroid(new Runnable() {
+			@Override
+			public void run() {
+				if (mChaptersDialog != null && mChaptersDialog.isShowing()) {
+					try {
+						mChaptersDialog.dismiss();
+					} catch(Throwable tr) {}
+					mChaptersDialog = null;
+				}
+			}
+		});
 	}
 	
 	private void showChaptersDialog() {

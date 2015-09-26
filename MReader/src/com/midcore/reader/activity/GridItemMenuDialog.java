@@ -65,7 +65,9 @@ public class GridItemMenuDialog extends Dialog implements android.view.View.OnCl
 	
 	private void conformDelete() {
 		if (mDeleteConformDialog != null && mDeleteConformDialog.isShowing()) {
-			mDeleteConformDialog.dismiss();
+			try {
+				mDeleteConformDialog.dismiss();
+			} catch(Throwable tr) {}
 		}
 		final boolean[] checkedItems = new boolean[1];
 		mDeleteConformDialog = new AlertDialog.Builder(getContext(), R.style.BookDeleteConformDialogTheme)
@@ -99,7 +101,9 @@ public class GridItemMenuDialog extends Dialog implements android.view.View.OnCl
 		}
 		// dismiss delete conform dialog
 		if (mDeleteConformDialog != null && mDeleteConformDialog.isShowing()) {
-			mDeleteConformDialog.dismiss();
+			try {
+				mDeleteConformDialog.dismiss();
+			} catch(Throwable tr) {}
 		}
 	}
 }

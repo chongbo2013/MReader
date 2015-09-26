@@ -10,6 +10,8 @@ public class BaseActivity extends GLActivity {
 	
 	MenuDialog mMenuDialog;
 	
+	boolean mResumed = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -23,7 +25,14 @@ public class BaseActivity extends GLActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mResumed = false;
 		dismissMenuDialog();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mResumed = true;
 	}
 	
 	@Override
@@ -36,12 +45,16 @@ public class BaseActivity extends GLActivity {
 	}
 	
 	protected void showMenuDialog() {
-		dismissMenuDialog();
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				mMenuDialog = new MenuDialog(BaseActivity.this);
-				mMenuDialog.show();
+				dismissMenuDialog();
+				if (mResumed) {
+					mMenuDialog = new MenuDialog(BaseActivity.this);
+					try {
+						mMenuDialog.show();
+					} catch(Throwable tr) {}
+				}
 			}
 		});
 	}
@@ -51,7 +64,9 @@ public class BaseActivity extends GLActivity {
 			@Override
 			public void run() {
 				if (mMenuDialog != null && mMenuDialog.isShowing()) {
-					mMenuDialog.dismiss();
+					try {
+						mMenuDialog.dismiss();
+					} catch(Throwable tr) {}
 					mMenuDialog = null;
 				}
 			}
