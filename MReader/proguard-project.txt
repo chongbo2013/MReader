@@ -62,6 +62,13 @@
 -keep class com.glview.**{*;}
 -dontwarn com.glview.**
 
+# keep setters in Views so that animations can still work.
+# see http://proguard.sourceforge.net/manual/examples.html#beans
+-keepclassmembers public class * extends com.glview.view.View {
+   void set*(***);
+   *** get*();
+}
+
 -keepclassmembers class * extends com.midcore.reader.reader.effect.PageSwitchEffect {*;}
 
 -keep public class * extends android.app.Service
